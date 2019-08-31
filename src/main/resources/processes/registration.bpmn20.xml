@@ -1,0 +1,67 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<definitions xmlns="http://www.omg.org/spec/BPMN/20100524/MODEL"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xmlns:flowable="http://flowable.org/bpmn"
+             targetNamespace="http://www.flowable.org/processdef">
+
+    <process id="registration" name="Course Registration" isExecutable="true">
+
+        <startEvent id="startEvent"/>
+        <sequenceFlow sourceRef="startEvent" targetRef="registrationRequest"/>
+
+        <userTask id="registrationRequest" name="Fetch course registration request"/>
+
+        <sequenceFlow sourceRef="registrationRequest" targetRef="student_balance_decision"/>
+        <exclusiveGateway id="student_balance_decision"/>
+        <sequenceFlow sourceRef="student_balance_decision" targetRef="fetchCourseInfo">
+            <conditionExpression xsi:type="tFormalExpression">
+                <![CDATA[
+          ${balance>=2000}
+        ]]>
+            </conditionExpression>
+        </sequenceFlow>
+        <sequenceFlow sourceRef="student_balance_decision" targetRef="rejectRegistration">
+            <conditionExpression xsi:type="tFormalExpression">
+                <![CDATA[
+          ${balance<2000}
+        ]]>
+            </conditionExpression>
+        </sequenceFlow>
+
+        <serviceTask id="fetchCourseInfo" name="Fetch Current Course Capacity"
+                     flowable:delegateExpression="${fetchCourseInfo}"/>
+        <sequenceFlow sourceRef="fetchCourseInfo" targetRef="course_capacity_decision"/>
+
+
+        <exclusiveGateway id="course_capacity_decision"/>
+        <sequenceFlow sourceRef="course_capacity_decision" targetRef="assignStudent">
+            <conditionExpression xsi:type="tFormalExpression">
+                <![CDATA[
+          ${courseInfo.capacity>0}
+        ]]>
+            </conditionExpression>
+        </sequenceFlow>
+        <sequenceFlow sourceRef="course_capacity_decision" targetRef="rejectRegistration">
+            <conditionExpression xsi:type="tFormalExpression">
+                <![CDATA[
+          ${courseInfo.capacity<=0}
+        ]]>
+            </conditionExpression>
+        </sequenceFlow>
+
+
+        <serviceTask id="assignStudent" name="Assign Student To Course" flowable:delegateExpression="${assignStudent}"/>
+        <sequenceFlow sourceRef="assignStudent" targetRef="updateCourseCapacity"/>
+        <serviceTask id="updateCourseCapacity" name="Update Course Capacity"
+                     flowable:delegateExpression="${updateCourseCapacity}"/>
+        <sequenceFlow sourceRef="updateCourseCapacity" targetRef="approveEnd"/>
+
+
+        <serviceTask id="rejectRegistration" name="Reject Course Registration For Student"
+                     flowable:delegateExpression="${rejectRegistration}"/>
+        <endEvent id="approveEnd"/>
+        <sequenceFlow sourceRef="rejectRegistration" targetRef="rejectEnd"/>
+        <endEvent id="rejectEnd"/>
+    </process>
+
+</definitions>

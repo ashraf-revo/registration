@@ -1,0 +1,16 @@
+spring:
+  datasource:
+    username: sa
+    password:
+    url: jdbc:h2:mem:flowable;DB_CLOSE_DELAY=-1
+#    url: jdbc:h2:file:./db;DB_CLOSE_DELAY=-1
+  profiles:
+    active: h2_console
+  jpa:
+    hibernate:
+      ddl-auto: update
+management:
+  endpoints:
+    web:
+      exposure:
+        include: "*"
