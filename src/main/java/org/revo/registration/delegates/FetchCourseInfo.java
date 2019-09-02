@@ -25,7 +25,7 @@ public class FetchCourseInfo implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) {
-        CourseInfo courseInfo = this.courseInfoService.findByCourse_Id(((Long) execution.getVariable("courseId")));
+        CourseInfo courseInfo = this.courseInfoService.findByCourse_Id(((Integer) execution.getVariable("courseId")));
         execution.setVariable("courseInfo", courseInfo);
         log.info("fetch Course info " + courseInfo);
     }

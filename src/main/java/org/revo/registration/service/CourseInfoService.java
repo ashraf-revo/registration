@@ -11,9 +11,9 @@ import java.util.List;
 public interface CourseInfoService {
     CourseInfo save(CourseInfo courseInfo);
 
-    CourseInfo findByCourse_Id(Long id);
+    CourseInfo findByCourse_Id(Integer id);
 
-    int decCapacity(Long id);
+    int decCapacity(Integer id);
 
     List<CourseInfo> findAll();
 }

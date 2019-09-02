@@ -24,7 +24,7 @@ public class UpdateCourseCapacity implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) {
-        Long courseId = (Long) execution.getVariable("courseId");
+        Integer courseId = (Integer) execution.getVariable("courseId");
         int num = courseInfoService.decCapacity(courseId);
         if (num == 0) log.error("no affected rows !");
         else log.info("Update course Capacity for courseId " + courseId);

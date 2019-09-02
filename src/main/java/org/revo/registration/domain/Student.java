@@ -19,7 +19,7 @@ import java.util.List;
 public class Student {
     @Id
     @GeneratedValue
-    private Long id;
+    private Integer id;
     private String name;
     private int balance;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "student")

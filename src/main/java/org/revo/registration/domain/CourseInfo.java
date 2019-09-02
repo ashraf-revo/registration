@@ -18,7 +18,7 @@ import javax.persistence.*;
 public class CourseInfo {
     @Id
     @GeneratedValue
-    private Long id;
+    private Integer id;
     private String meta;
     private int capacity;
     @OneToOne(fetch = FetchType.LAZY)

@@ -20,8 +20,8 @@ public class SCServiceImpl implements SCService {
     private SCRepository scRepository;
 
     @Override
-    public void save(SC sc) {
-        scRepository.save(sc);
+    public SC save(SC sc) {
+        return scRepository.save(sc);
     }
 
     @Override

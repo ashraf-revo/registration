@@ -16,7 +16,7 @@ import javax.persistence.*;
 public class SC {
     @Id
     @GeneratedValue
-    private Long id;
+    private Integer id;
     @ManyToOne
     @JoinColumn
     private Student student;

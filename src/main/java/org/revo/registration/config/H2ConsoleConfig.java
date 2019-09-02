@@ -1,5 +1,6 @@
 package org.revo.registration.config;
 
+import org.h2.server.web.WebServlet;
 import org.springframework.boot.web.servlet.ServletContextInitializer;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,7 +18,7 @@ public class H2ConsoleConfig {
     @Bean
     public ServletContextInitializer initializer() {
         return servletContext -> {
-            ServletRegistration.Dynamic h2ConsoleServlet = servletContext.addServlet("H2Console", new org.h2.server.web.WebServlet());
+            ServletRegistration.Dynamic h2ConsoleServlet = servletContext.addServlet("H2Console", new WebServlet());
             h2ConsoleServlet.addMapping("/h2-console/*");
             h2ConsoleServlet.setInitParameter("-properties", "src/main/resources");
             h2ConsoleServlet.setLoadOnStartup(1);

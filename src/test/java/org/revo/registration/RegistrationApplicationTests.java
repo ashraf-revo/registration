@@ -1,18 +1,14 @@
 package org.revo.registration;
 
-import org.flowable.engine.RuntimeService;
-import org.flowable.engine.TaskService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.revo.registration.domain.Course;
 import org.revo.registration.domain.CourseInfo;
 import org.revo.registration.domain.Student;
-import org.revo.registration.service.CourseInfoService;
-import org.revo.registration.service.CourseService;
-import org.revo.registration.service.SCService;
-import org.revo.registration.service.StudentService;
+import org.revo.registration.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import javax.annotation.PostConstruct;
@@ -29,12 +25,10 @@ import static org.hamcrest.Matchers.*;
  */
 
 @RunWith(SpringRunner.class)
-@SpringBootTest
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 public class RegistrationApplicationTests {
     @Autowired
-    private RuntimeService runtimeService;
-    @Autowired
-    private TaskService taskService;
+    private TestRestTemplate restTemplate;
     @Autowired
     private CourseService courseService;
     @Autowired
@@ -43,6 +37,8 @@ public class RegistrationApplicationTests {
     private StudentService studentService;
     @Autowired
     private SCService scService;
+    @Autowired
+    private RegistrationService registrationService;
 
     @PostConstruct
     public void init() {
@@ -73,8 +69,7 @@ public class RegistrationApplicationTests {
                     variables.put("courseId", it.getCourse().getId());
                     variables.put("studentId", student.getId());
                     variables.put("balance", student.getBalance());
-                    runtimeService.startProcessInstanceByKey("registration", variables);
-                    taskService.complete(taskService.createTaskQuery().singleResult().getId());
+                    registrationService.handle(variables);
                     assertThat(it.getCapacity() - 1, equalTo(courseInfoService.findByCourse_Id(it.getCourse().getId()).getCapacity()));
                     assertThat(scService.findAll(), hasItem(allOf(hasProperty("student", hasProperty("id", is(student.getId()))), hasProperty("course", hasProperty("id", is(it.getCourse().getId()))))));
 
@@ -94,8 +89,7 @@ public class RegistrationApplicationTests {
                     variables.put("courseId", it.getCourse().getId());
                     variables.put("studentId", student.getId());
                     variables.put("balance", student.getBalance());
-                    runtimeService.startProcessInstanceByKey("registration", variables);
-                    taskService.complete(taskService.createTaskQuery().singleResult().getId());
+                    registrationService.handle(variables);
                     assertThat(it.getCapacity(), equalTo(courseInfoService.findByCourse_Id(it.getCourse().getId()).getCapacity()));
                 });
     }
@@ -113,8 +107,7 @@ public class RegistrationApplicationTests {
                     variables.put("courseId", it.getCourse().getId());
                     variables.put("studentId", student.getId());
                     variables.put("balance", student.getBalance());
-                    runtimeService.startProcessInstanceByKey("registration", variables);
-                    taskService.complete(taskService.createTaskQuery().singleResult().getId());
+                    registrationService.handle(variables);
                     assertThat(it.getCapacity() - 1, equalTo(courseInfoService.findByCourse_Id(it.getCourse().getId()).getCapacity()));
                     assertThat(scService.findAll(), hasItem(allOf(hasProperty("student", hasProperty("id", is(student.getId()))), hasProperty("course", hasProperty("id", is(it.getCourse().getId()))))));
                 });
@@ -133,10 +126,20 @@ public class RegistrationApplicationTests {
                     variables.put("courseId", it.getCourse().getId());
                     variables.put("studentId", student.getId());
                     variables.put("balance", student.getBalance());
-                    runtimeService.startProcessInstanceByKey("registration", variables);
-                    taskService.complete(taskService.createTaskQuery().singleResult().getId());
+                    registrationService.handle(variables);
                     assertThat(it.getCapacity(), equalTo(courseInfoService.findByCourse_Id(it.getCourse().getId()).getCapacity()));
                 });
+    }
+
+    @Test
+    public void handle() {
+        Student student = studentService.findAll().stream().filter(it -> it.getBalance() >= 2000).findAny().get();
+        CourseInfo courseInfo = courseInfoService.findAll().stream().filter(it -> it.getCapacity() > 0).findAny().get();
+        Map<String, Object> map = new HashMap<>();
+        map.put("studentId", student.getId());
+        map.put("courseId", courseInfo.getCourse().getId());
+        map.put("balance", student.getBalance());
+        this.restTemplate.postForObject("/handle", map, Void.class);
     }
 
 }

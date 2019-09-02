@@ -19,7 +19,7 @@ import java.util.List;
 public class Course {
     @Id
     @GeneratedValue
-    private Long id;
+    private Integer id;
     private String name;
     @OneToMany(cascade = CascadeType.ALL, fetch = FetchType.LAZY, mappedBy = "course")
     private List<SC> scs;

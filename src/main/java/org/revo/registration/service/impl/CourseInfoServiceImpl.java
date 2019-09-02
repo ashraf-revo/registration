@@ -27,13 +27,13 @@ public class CourseInfoServiceImpl implements CourseInfoService {
     }
 
     @Override
-    public CourseInfo findByCourse_Id(Long id) {
+    public CourseInfo findByCourse_Id(Integer id) {
         return courseInfoRepository.findByCourse_Id(id);
     }
 
     @Transactional
     @Override
-    public int decCapacity(Long id) {
+    public int decCapacity(Integer id) {
         return courseInfoRepository.decCapacity(id);
     }
 

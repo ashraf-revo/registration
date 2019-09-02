@@ -27,8 +27,12 @@ public class AssignStudent implements JavaDelegate {
 
     @Override
     public void execute(DelegateExecution execution) {
-        Course course = Course.builder().id(((Long) execution.getVariable("courseId"))).build();
-        Student student = Student.builder().id(((Long) execution.getVariable("studentId"))).build();
-        scService.save(new SC(null, student, course));
+        Course course = Course.builder().id(((Integer) execution.getVariable("courseId"))).build();
+        Student student = Student.builder().id(((Integer) execution.getVariable("studentId"))).build();
+        if (scService.save(new SC(null, student, course)).getId() != null) {
+            log.info("successfully assign student " + student.getId() + "  to course " + course.getId());
+        } else {
+            log.error("can't assign student " + student.getId() + "  to course " + course.getId());
+        }
     }
 }

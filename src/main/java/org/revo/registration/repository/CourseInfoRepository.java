@@ -9,10 +9,10 @@ import org.springframework.data.repository.CrudRepository;
  *  Created by revo (ashraf1abdelrasool@gmail.com)  on 8/31/19, 5:40 PM.
  */
 
-public interface CourseInfoRepository extends CrudRepository<CourseInfo, Long> {
-    CourseInfo findByCourse_Id(Long id);
+public interface CourseInfoRepository extends CrudRepository<CourseInfo, Integer> {
+    CourseInfo findByCourse_Id(Integer id);
 
     @Modifying
     @Query("update CourseInfo as ci set ci.capacity=ci.capacity-1 where ci.course.id=?1")
-    int decCapacity(Long id);
+    int decCapacity(Integer id);
 }

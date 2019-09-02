@@ -9,7 +9,7 @@ import java.util.List;
  */
 
 public interface SCService {
-    void save(SC sc);
+    SC save(SC sc);
 
     List<SC> findAll();
 }
